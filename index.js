@@ -53,6 +53,28 @@ server.post('/api/cohorts', async(req,res) => {
   }
 });
 
+// update Cohorts
+server.put('/api/cohorts/:id', async (req,res) => {
+  try{
+    const count = await db('cohorts')
+      .where({id: req.params.id })
+      .update(req.body);
+
+      if (count > 0 ){
+        const cohort = await db('cohorts')
+        .where({ id: req.params.id })
+        .first()
+
+        res.status(200).json(cohort);
+      } else {
+        res.status(404).json({ mesage: "Record not found"});
+      }
+  } catch(error) {
+    const message = errors[error.errno] || 'We ran into an error';
+    res.status(500).json({message, error });
+  }
+});
+
 
 
 const port = process.env.PORT || 9090;
